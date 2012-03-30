@@ -11,6 +11,8 @@ module ActiveAdmin
     belongs_to :resource, :polymorphic => true
     belongs_to :author, :polymorphic => true
 
+    attr_accessible :resource_id, :resource_type, :body
+
     validates_presence_of :resource
     validates_presence_of :body
     validates_presence_of :namespace
@@ -38,6 +40,13 @@ module ActiveAdmin
   
     def self.resource_id_type
       columns.select { |i| i.name == "resource_id" }.first.type
+    end
+
+    private
+
+    def mass_assignment_authorizer(role = :default)
+      # ignore any specification of role, since we want the attr_accessible above to work for all roles
+      super(:default)
     end
 
   end
