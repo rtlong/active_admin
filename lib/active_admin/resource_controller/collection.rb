@@ -33,28 +33,29 @@ module ActiveAdmin
       end
 
 
-      module Sorting
-        protected
+      # module Sorting
+      #   protected
 
-        def active_admin_collection
-          sort_order(super)
-        end
+      #   def active_admin_collection
+      #     sort_order(super)
+      #   end
 
-        def sort_order(chain)
-          params[:order] ||= active_admin_config.sort_order
-          if params[:order] && params[:order] =~ /^([\w\_\.]+)_(desc|asc)$/
-            column = $1
-            order  = $2
-            table  = active_admin_config.resource_table_name
-            table_column = (column =~ /\./) ? column :
-              "#{table}.#{active_admin_config.resource_quoted_column_name(column)}"
+      #   def sort_order(chain)
+      #     params[:order] ||= active_admin_config.sort_order
+      #     if params[:order] #&& params[:order] =~ /^([\w\_\.]+)_(desc|asc)$/
+      #       # column = $1
+      #       # order  = $2
+      #       # table  = active_admin_config.resource_table_name
+      #       # table_column = (column =~ /\./) ? column :
+      #       #   "#{table}.#{active_admin_config.resource_quoted_column_name(column)}"
 
-            chain.order("#{table_column} #{order}")
-          else
-            chain # just return the chain
-          end
-        end
-      end
+      #       # chain.order("#{table_column} #{order}")
+      #       chain.metasearch(meta_sort: params[:order]).relation
+      #     else
+      #       chain # just return the chain
+      #     end
+      #   end
+      # end
 
 
       module Search
@@ -65,7 +66,9 @@ module ActiveAdmin
         end
 
         def search(chain)
-          @search = chain.metasearch(clean_search_params(params[:q]))
+          search_params = clean_search_params(params[:q])
+          search_params.update(meta_sort: params[:order].gsub(?_,?.)) if params[:order].present?
+          @search = chain.metasearch(search_params)
           @search.relation
         end
 
@@ -141,7 +144,7 @@ module ActiveAdmin
       # Include all the Modules. BaseCollection must be first
       # and pagination should be last
       include BaseCollection
-      include Sorting
+      # include Sorting
       include Search
       include Scoping
       include Pagination
