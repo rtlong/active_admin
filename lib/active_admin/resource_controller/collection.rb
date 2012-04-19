@@ -32,31 +32,30 @@ module ActiveAdmin
         end
       end
 
-
-      # module Sorting
-      #   protected
-
-      #   def active_admin_collection
-      #     sort_order(super)
-      #   end
-
-      #   def sort_order(chain)
-      #     params[:order] ||= active_admin_config.sort_order
-      #     if params[:order] #&& params[:order] =~ /^([\w\_\.]+)_(desc|asc)$/
-      #       # column = $1
-      #       # order  = $2
-      #       # table  = active_admin_config.resource_table_name
-      #       # table_column = (column =~ /\./) ? column :
-      #       #   "#{table}.#{active_admin_config.resource_quoted_column_name(column)}"
-
-      #       # chain.order("#{table_column} #{order}")
-      #       chain.metasearch(meta_sort: params[:order]).relation
-      #     else
-      #       chain # just return the chain
-      #     end
-      #   end
-      # end
-
+      # This is commented because I've shoved metasort parameters into the Search module down there.
+      #
+      #module Sorting
+      #  protected
+      #
+      #  def active_admin_collection
+      #    sort_order(super)
+      #  end
+      #
+      #  def sort_order(chain)
+      #    params[:order] ||= active_admin_config.sort_order
+      #    if params[:order] && params[:order] =~ /^([\w\_\.]+)_(desc|asc)$/
+      #      column = $1
+      #      order  = $2
+      #      table  = active_admin_config.resource_table_name
+      #      table_column = (column =~ /\./) ? column :
+      #        "#{table}.#{active_admin_config.resource_quoted_column_name(column)}"
+      #
+      #      chain.reorder("#{table_column} #{order}")
+      #    else
+      #      chain # just return the chain
+      #    end
+      #  end
+      #end
 
       module Search
         protected
