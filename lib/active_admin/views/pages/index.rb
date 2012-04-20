@@ -5,7 +5,14 @@ module ActiveAdmin
       class Index < Base
 
         def title
-          active_admin_config.plural_resource_label
+          case config[:title]
+          when Symbol, Proc
+            call_method_or_proc_on(resource, config[:title])
+          when String
+            config[:title]
+          else
+            active_admin_config.plural_resource_label
+          end
         end
 
         def config
@@ -15,7 +22,7 @@ module ActiveAdmin
         # Render's the index configuration that was set in the
         # controller. Defaults to rendering the ActiveAdmin::Pages::Index::Table
         def main_content
-          if active_admin_config.batch_actions.any? 
+          if active_admin_config.batch_actions.any?
             batch_action_form do
               build_table_tools
               build_collection
@@ -71,7 +78,7 @@ module ActiveAdmin
                 text_node I18n.t("active_admin.batch_actions.button_label")
               end
             end
-          
+
             build_scopes
           end
         end
@@ -119,7 +126,7 @@ module ActiveAdmin
             raise ArgumentError, "'as' requires a class or a symbol"
           end
         end
-        
+
         def render_blank_slate
           blank_slate_content = I18n.t("active_admin.blank_slate.content", :resource_name => active_admin_config.plural_resource_label)
           if controller.action_methods.include?('new')
@@ -127,17 +134,17 @@ module ActiveAdmin
           end
           insert_tag(view_factory.blank_slate, blank_slate_content)
         end
-        
+
         def render_empty_results
           empty_results_content = I18n.t("active_admin.pagination.empty", :model => active_admin_config.plural_resource_label)
           insert_tag(view_factory.blank_slate, empty_results_content)
         end
-        
+
         def render_index
           renderer_class = find_index_renderer_class(config[:as])
           paginator      = config[:paginator].nil?      ? true : config[:paginator]
           download_links = config[:download_links].nil? ? true : config[:download_links]
-          
+
           paginated_collection(collection, :entry_name     => active_admin_config.resource_label,
                                            :entries_name   => active_admin_config.plural_resource_label,
                                            :download_links => download_links,
