@@ -15,13 +15,14 @@ module ActiveAdmin
         def add_classes_to_body
           @body.add_class(params[:action])
           @body.add_class(params[:controller].gsub('/', '_'))
+          @body.add_class("active_admin")
           @body.add_class("logged_in")
           @body.add_class(active_admin_namespace.name.to_s + "_namespace")
         end
 
         def build_active_admin_head
           within @head do
-            insert_tag Arbre::HTML::Title, [title, active_admin_application.site_title].join(" | ")
+            insert_tag Arbre::HTML::Title, [title, render_or_call_method_or_proc_on(self, active_admin_application.site_title)].join(" | ")
             active_admin_application.stylesheets.each do |style|
               text_node(stylesheet_link_tag(style.path, style.options).html_safe)
             end
@@ -41,7 +42,6 @@ module ActiveAdmin
               build_page_content
               build_footer
             end
-            build_extra_content
           end
         end
 
@@ -126,10 +126,6 @@ module ActiveAdmin
         # Renders the content for the footer
         def build_footer
           insert_tag view_factory.footer
-        end
-
-        def build_extra_content
-          # Put popovers, etc here 
         end
 
       end

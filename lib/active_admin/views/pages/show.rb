@@ -8,11 +8,8 @@ module ActiveAdmin
         end
 
         def title
-          case config[:title]
-          when Symbol, Proc
-            call_method_or_proc_on(resource, config[:title])
-          when String
-            config[:title]
+          if config[:title]
+            render_or_call_method_or_proc_on(resource, config[:title])
           else
             default_title
           end
@@ -36,7 +33,13 @@ module ActiveAdmin
         protected
 
         def default_title
-          "#{active_admin_config.resource_label} ##{resource.id}"
+          title = display_name(resource)
+
+          if title.nil? || title.empty? || title == resource.to_s
+            title = "#{active_admin_config.resource_label} ##{resource.id}"
+          end
+
+          title
         end
 
         module DefaultMainContent

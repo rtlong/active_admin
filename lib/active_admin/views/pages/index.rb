@@ -23,7 +23,7 @@ module ActiveAdmin
         # controller. Defaults to rendering the ActiveAdmin::Pages::Index::Table
         def main_content
           if active_admin_config.batch_actions.any?
-            batch_action_form do
+            wrap_with_batch_action_form do
               build_table_tools
               build_collection
             end
@@ -35,8 +35,12 @@ module ActiveAdmin
 
         protected
 
-        def build_extra_content
-          build_batch_action_popover
+        def wrap_with_batch_action_form(&block)
+          if active_admin_config.batch_actions.any?
+            batch_action_form(&block)
+          else
+            block.call
+          end
         end
 
         def items_in_collection?
@@ -83,11 +87,9 @@ module ActiveAdmin
           end
         end
 
-        def build_batch_action_popover
-          insert_tag view_factory.batch_action_popover do
-            active_admin_config.batch_actions.each do |the_action|
-              action the_action if call_method_or_proc_on(self, the_action.display_if_block)
-            end
+        def build_batch_actions_selector
+          if active_admin_config.batch_actions.any?
+            insert_tag view_factory.batch_action_selector, active_admin_config.batch_actions
           end
         end
 
