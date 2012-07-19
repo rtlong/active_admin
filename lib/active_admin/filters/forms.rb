@@ -6,7 +6,7 @@ module ActiveAdmin
     class FormBuilder < ::ActiveAdmin::FormBuilder
 
       def filter(method, options = {})
-        return "" if method.nil? || method == ""
+        return "" if method.blank?
         options[:as] ||= default_input_type(method)
         return "" unless options[:as]
         content = input(method, options)
@@ -37,6 +37,10 @@ module ActiveAdmin
       end
 
       def custom_input_class_name(as)
+        "Filter#{as.to_s.camelize}Input"
+      end
+
+      def active_admin_input_class_name(as)
         "ActiveAdmin::Inputs::Filter#{as.to_s.camelize}Input"
       end
 

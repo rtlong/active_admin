@@ -63,7 +63,7 @@ module ActiveAdmin
               end
             when Page
 
-              match "/#{config.resource_name.singular}" => "#{config.resource_name.singular}#index"
+              match "/#{config.underscored_resource_name}" => "#{config.underscored_resource_name}#index"
               config.page_actions.each do |action|
                 match "/#{config.underscored_resource_name}/#{action.name}" => "#{config.underscored_resource_name}##{action.name}", :via => action.http_verb
               end

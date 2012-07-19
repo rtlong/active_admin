@@ -58,7 +58,7 @@ module ActiveAdmin
     inheritable_setting :logout_link_method, :get
 
     # Whether the batch actions are enabled or not
-    inheritable_setting :batch_actions, true
+    inheritable_setting :batch_actions, false
 
     # Whether filters are enabled
     inheritable_setting :filters, true
@@ -116,11 +116,17 @@ module ActiveAdmin
     # @returns [Namespace] the new or existing namespace
     def find_or_create_namespace(name)
       name ||= :root
-      return namespaces[name] if namespaces[name]
-      namespace = Namespace.new(self, name)
-      namespaces[name] = namespace
-      ActiveAdmin::Event.dispatch ActiveAdmin::Namespace::RegisterEvent, namespace
+
+      if namespaces[name]
+        namespace = namespaces[name]
+      else
+        namespace = Namespace.new(self, name)
+        namespaces[name] = namespace
+        ActiveAdmin::Event.dispatch ActiveAdmin::Namespace::RegisterEvent, namespace
+      end
+
       yield(namespace) if block_given?
+
       namespace
     end
 
